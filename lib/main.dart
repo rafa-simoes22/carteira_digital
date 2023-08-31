@@ -8,10 +8,10 @@ class HomePageWidget extends StatefulWidget {
 }
 
 class _HomePageWidgetState extends State<HomePageWidget> {
-  double saldo = 0;
-  double valorAdicionado = 0;
+  double saldo = 1000;
+  double valorSubtraido = 0;  // Renomeado para valorSubtraido
   bool mostrarCampos = false;  
-  bool mostrarBotaoVoltar = false;  // Novo estado para controlar a exibição do botão voltar
+  bool mostrarBotaoVoltar = false;  
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -51,11 +51,11 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                           TextInputType.numberWithOptions(decimal: true),
                       onChanged: (value) {
                         setState(() {
-                          valorAdicionado = double.tryParse(value) ?? 0;
+                          valorSubtraido = double.tryParse(value) ?? 0;
                         });
                       },
                       decoration: InputDecoration(
-                        labelText: 'Valor a adicionar',
+                        labelText: 'Digite o Valor',
                       ),
                     ),
                   ),
@@ -66,14 +66,14 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                       ElevatedButton(
                         onPressed: () {
                           setState(() {
-                            saldo += valorAdicionado;
+                            saldo -= valorSubtraido;  // Subtrair o valorSubtraido do saldo
                           });
                         },
                         child: Text('Enviar'),
                       ),
                     ],
                   ),
-                if (!mostrarCampos && !mostrarBotaoVoltar)  // Mostrar o botão "Transação" somente se os campos não estiverem sendo mostrados
+                if (!mostrarCampos && !mostrarBotaoVoltar)
                   ElevatedButton(  
                     onPressed: () {
                       setState(() {
@@ -83,7 +83,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                     },
                     child: Text('Transação'),
                   ),
-                if (mostrarBotaoVoltar)  // Mostrar o botão de voltar apenas se mostrarBotaoVoltar for verdadeiro
+                if (mostrarBotaoVoltar)  
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Row(
