@@ -8,10 +8,12 @@ class HomePageWidget extends StatefulWidget {
 }
 
 class _HomePageWidgetState extends State<HomePageWidget> {
-  double saldo = 1000;
-  double valorSubtraido = 0;  // Renomeado para valorSubtraido
-  bool mostrarCampos = false;  
-  bool mostrarBotaoVoltar = false;  
+  double saldo = 100;
+  double valorSubtraido = 0;
+  bool mostrarCampos = false;
+  bool mostrarBotaoVoltar = false;
+  bool mostrarExtrato = false;  // Novo estado para controlar a exibição do extrato
+  List<double> historico = [];  // Lista para manter o histórico de valores
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -25,11 +27,12 @@ class _HomePageWidgetState extends State<HomePageWidget> {
             setState(() {
               mostrarCampos = false;
               mostrarBotaoVoltar = false;
+              mostrarExtrato = false;
             });
             return false;
           }
           return true;
-        }, 
+        },
         child: Scaffold(
           key: scaffoldKey,
           backgroundColor: Colors.grey[200],
@@ -43,7 +46,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                   'Saldo: \$${saldo.toStringAsFixed(2)}',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
-                if (mostrarCampos)  
+                if (mostrarCampos)
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: TextField(
@@ -55,26 +58,27 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                         });
                       },
                       decoration: InputDecoration(
-                        labelText: 'Digite o Valor',
+                        labelText: 'Valor a subtrair',
                       ),
                     ),
                   ),
-                if (mostrarCampos)  
+                if (mostrarCampos)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ElevatedButton(
                         onPressed: () {
                           setState(() {
-                            saldo -= valorSubtraido;  // Subtrair o valorSubtraido do saldo
+                            saldo -= valorSubtraido;
+                            historico.add(-valorSubtraido);
                           });
                         },
-                        child: Text('Enviar'),
+                        child: Text('Subtrair'),
                       ),
                     ],
                   ),
                 if (!mostrarCampos && !mostrarBotaoVoltar)
-                  ElevatedButton(  
+                  ElevatedButton(
                     onPressed: () {
                       setState(() {
                         mostrarCampos = true;
@@ -83,7 +87,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                     },
                     child: Text('Transação'),
                   ),
-                if (mostrarBotaoVoltar)  
+                if (mostrarBotaoVoltar)
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Row(
@@ -94,12 +98,44 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                             setState(() {
                               mostrarCampos = false;
                               mostrarBotaoVoltar = false;
+                              mostrarExtrato = false;
                             });
                           },
                           icon: Icon(Icons.arrow_back),
                         ),
                       ],
                     ),
+                  ),
+                if (mostrarExtrato)
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Extrato:',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        for (var valor in historico)
+                          Text(
+                            'R\$ ${valor.toStringAsFixed(2)}',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                      ],
+                    ),
+                  ),
+                if (!mostrarCampos && !mostrarExtrato && !mostrarBotaoVoltar)
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        mostrarExtrato = true;
+                        mostrarBotaoVoltar = true;
+                      });
+                    },
+                    child: Text('Extrato'),
                   ),
               ],
             ),
